@@ -75,7 +75,7 @@ class GravityFSM(MovementFSM):
             for item in colliders:
                 if item.colliderect(hitBox):
                     #get clip rect; subtract height of clip rect from y position of sonic
-                    if self.obj.position[1] < 436:
+                    if self.obj.position[1] < 236:
                         self.land()
             #check to see if i should transition to grounded
         elif self == "jumping":

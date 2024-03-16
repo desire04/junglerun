@@ -13,13 +13,14 @@ class Drawable(object):
         objPos = trackingObject.position
         
         offset = objPos + (objSize // 2) - (RESOLUTION // 2)
-        
+        #print(offset)
         for i in range(2):
-            offset[i] = int(max(0,
-                                min(offset[i],
-                                    worldSize[i] - RESOLUTION[i])))
-        
+            offset[i] = int(max(0,offset[i]))
+        offset[1] = 0                            
         cls.CAMERA_OFFSET = offset
+       #print(cls.CAMERA_OFFSET)
+        #print(trackingObject.position)
+        #print(worldSize)
         
         
 
