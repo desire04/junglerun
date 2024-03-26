@@ -1,6 +1,7 @@
 from . import AbstractGameFSM
 from utils import vec, magnitude, EPSILON, scale, RESOLUTION, rectAdd
 from statemachine import State
+from gameObjects import Drawable
 
 
 class MovementFSM(AbstractGameFSM):
@@ -30,9 +31,12 @@ class AccelerationFSM(MovementFSM):
 
         super().__init__(obj)
 
-    def update(self, seconds=0):
+    def update(self, seconds=0, colliders=None):
         if self == "positive" or self == "uniform_motion":
             self.obj.velocity += self.direction * self.accel * seconds
+            hitBox = rectAdd(self.obj.position, self.obj.image.get_rect())
+            if colliders.colliderect(hitBox):
+                    return "gameOver"
 
         super().update(seconds)
 
@@ -41,7 +45,7 @@ class GravityFSM(MovementFSM):
         super().__init__(obj)
         self.jumpTimer = 0
         self.gravity = 200
-        self.jumpSpeed = 65
+        self.jumpSpeed = 70
         self.jumpTime = 0.1
 
     grounded = State(initial=True)
@@ -73,10 +77,14 @@ class GravityFSM(MovementFSM):
             self.obj.velocity[1] += self.gravity * seconds
             hitBox = rectAdd(self.obj.position, self.obj.image.get_rect())
             for item in colliders:
-                if item.colliderect(hitBox):
+                if type(item) == Drawable:
+                    if item.doesCollide(self.obj):
+                        return "gameOver"
+                if type(item) != Drawable:
+                    if item.colliderect(hitBox):
                     #get clip rect; subtract height of clip rect from y position of sonic
-                    if self.obj.position[1] < 236:
-                        self.land()
+                        if self.obj.position[1] < 236:
+                            self.land()
             #check to see if i should transition to grounded
         elif self == "jumping":
             self.obj.velocity[1] = -self.jumpSpeed

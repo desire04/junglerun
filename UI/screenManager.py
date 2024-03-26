@@ -11,6 +11,7 @@ class ScreenManager(object):
         self.game = GameEngine()
         self.state = ScreenManagerFSM(self)
         self.pausedText = TextEntry(vec(0,0),"Paused")
+        self.gameOverText = TextEntry(vec(0,0), "GAME OVER!")
 
         size = self.pausedText.getSize()
         midpoint = RESOLUTION // 2 - size
@@ -32,9 +33,13 @@ class ScreenManager(object):
 
             if self.state == "paused":
                 self.pausedText.draw(drawSurf)
+            
+            elif self.state == "gameOver":
+                self.gameOverText.draw(drawSurf)
 
         elif self.state == "mainMenu":
             self.mainMenu.draw(drawSurf)
+
 
     def handleEvent(self, event):
         if self.state in ["game", "paused"]:
@@ -55,6 +60,8 @@ class ScreenManager(object):
             
     def update(self, seconds):
         if self.state == "game":
-            self.game.update(seconds)
+            action = self.game.update(seconds)
+            if action:
+                self.state.endGame()
         elif self.state == "mainMenu":
             self.mainMenu.update(seconds)

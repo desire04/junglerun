@@ -13,14 +13,10 @@ class Drawable(object):
         objPos = trackingObject.position
         
         offset = objPos + (objSize // 2) - (RESOLUTION // 2)
-        #print(offset)
         for i in range(2):
             offset[i] = int(max(0,offset[i]))
         offset[1] = 0                            
         cls.CAMERA_OFFSET = offset
-       #print(cls.CAMERA_OFFSET)
-        #print(trackingObject.position)
-        #print(worldSize)
         
         
 
@@ -35,9 +31,11 @@ class Drawable(object):
     def __init__(self, position=vec(0,0), fileName="", offset=None):
         if fileName != "":
             self.image = SpriteManager.getInstance().getSprite(fileName, offset)
-        
+            self.myRect = self.image.get_rect()
+       
         self.position  = vec(*position)
         self.imageName = fileName
+        
     
     def draw(self, drawSurface):
         drawSurface.blit(self.image, list(map(int, self.position - Drawable.CAMERA_OFFSET)))
@@ -53,11 +51,11 @@ class Drawable(object):
     
     
     def getCollisionRect(self):
-        newRect =  self.image.get_rect()
+        newRect = self.myRect
         newRect.left = int(self.position[0])
         newRect.top = int(self.position[1])
         return newRect
-    
+
     def doesCollide(self, other):
         return self.getCollisionRect().colliderect(other.getCollisionRect())   
     

@@ -6,8 +6,6 @@ from utils import RESOLUTION, UPSCALED
 def main():
     pygame.init()
 
-    pygame.init()
-
     screen = pygame.display.set_mode(list(map(int, UPSCALED)))
     drawSurface = pygame.Surface(list(map(int, RESOLUTION)))
 
