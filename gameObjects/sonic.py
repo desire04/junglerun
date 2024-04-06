@@ -54,8 +54,8 @@ class Sonic(MobileGravity):
                 self.LR.stop_increase()
 
     def update(self, seconds, colliders):
-        resultUD = self.UD.update(seconds, colliders)
-        resultLR = self.LR.update(seconds, colliders[0])
+        resultUD = self.UD.update(seconds, colliders[3])
+        resultLR = self.LR.update(seconds, [colliders[0], colliders[1], colliders[2]])
 
         super().update(seconds, colliders)
 

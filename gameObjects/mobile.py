@@ -4,8 +4,8 @@ from utils import vec, magnitude, scale
 class Mobile(Animated):
     def __init__(self, position, fileName=""):
         super().__init__(position, fileName)
-        self.velocity = vec(0,0)
-        self.maxVelocity = 1000
+        self.velocity = vec(10,0)
+        self.maxVelocity = 500
     
     def update(self, seconds, colliders):
         super().update(seconds, colliders)

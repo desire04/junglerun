@@ -23,7 +23,8 @@ class RunningFSM(AnimateFSM):
     move = standing.to(moving)
     jump = moving.to(jumping) | falling.to.itself(internal=True)
     fall = jumping.to(falling) | moving.to(falling)
-    land = falling.to(moving, cond="hasVelocity") | falling.to(standing, cond="noVelocity")
+    land = falling.to(moving, cond="hasVelocity") | falling.to(standing, cond="noVelocity") \
+           | jumping.to(moving, cond="hasVelocity") | jumping.to(standing, cond="noVelocity")
     stop = moving.to(standing)
 
     def updateState(self):

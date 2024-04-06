@@ -27,16 +27,35 @@ class AccelerationFSM(MovementFSM):
         self.axis = axis
         self.direction = vec(0,0)
         self.direction[self.axis] = 1
-        self.accel = 100
+        self.accel = 5
 
         super().__init__(obj)
 
+    def updateState(self):
+        if self == "positive" and self.obj.position[0] % 1000 != 0:
+            self.stop_increase()
+        elif self.isNotAccelerating() and self.obj.position[0] % 1000 == 0:
+            self.increase()
+
+    def isAccelerating(self):
+        return self.accel > 0
+    
+    def isNotAccelerating(self):
+        return self.accel == 0
+    
     def update(self, seconds=0, colliders=None):
-        if self == "positive" or self == "uniform_motion":
-            self.obj.velocity += self.direction * self.accel * seconds
-            hitBox = rectAdd(self.obj.position, self.obj.image.get_rect())
-            if colliders.colliderect(hitBox):
-                    return "gameOver"
+        if self == "uniform_motion":
+            self.accel = 0
+        elif self == "positive":
+            self.accel = 10
+        self.obj.velocity += self.direction * self.accel * seconds
+        #self.obj.UD.gravity = #magnitude of velocity * some factor
+        self.obj.velocity[0] = min(self.obj.maxVelocity, self.obj.velocity[0])
+        #print(self.obj.velocity[0])
+        hitBox = rectAdd(self.obj.position, self.obj.image.get_rect())
+        for item in colliders:
+            if item.colliderect(hitBox):
+                return "gameOver"
 
         super().update(seconds)
 
@@ -44,8 +63,8 @@ class GravityFSM(MovementFSM):
     def __init__(self, obj):
         super().__init__(obj)
         self.jumpTimer = 0
-        self.gravity = 200
-        self.jumpSpeed = 70
+        self.gravity = 150
+        self.jumpSpeed = 100
         self.jumpTime = 0.1
 
     grounded = State(initial=True)
@@ -76,15 +95,10 @@ class GravityFSM(MovementFSM):
         if self == "falling":
             self.obj.velocity[1] += self.gravity * seconds
             hitBox = rectAdd(self.obj.position, self.obj.image.get_rect())
-            for item in colliders:
-                if type(item) == Drawable:
-                    if item.doesCollide(self.obj):
-                        return "gameOver"
-                if type(item) != Drawable:
-                    if item.colliderect(hitBox):
+            if colliders.colliderect(hitBox):
                     #get clip rect; subtract height of clip rect from y position of sonic
-                        if self.obj.position[1] < 236:
-                            self.land()
+                if self.obj.position[1] < 236:
+                    self.land()
             #check to see if i should transition to grounded
         elif self == "jumping":
             self.obj.velocity[1] = -self.jumpSpeed

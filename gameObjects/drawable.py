@@ -51,9 +51,9 @@ class Drawable(object):
     
     
     def getCollisionRect(self):
-        newRect = self.myRect
-        newRect.left = int(self.position[0])
-        newRect.top = int(self.position[1])
+        newRect = pygame.Rect(self.myRect)
+        newRect.left = int(self.position[0]+newRect.left)
+        newRect.top = int(self.position[1]+newRect.top)
         return newRect
 
     def doesCollide(self, other):
