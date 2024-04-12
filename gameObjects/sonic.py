@@ -16,6 +16,7 @@ class Sonic(MobileGravity):
 
         self.framesPerSecond = 3
         self.nFrames = 4
+        self.hasAShield = False
 
         self.nFramesList = {
             "moving" : 3, 
@@ -47,15 +48,21 @@ class Sonic(MobileGravity):
         if event.type == pygame.KEYDOWN:
             if event.key == K_UP:
                 self.UD.jump()
-            elif event.key == K_RIGHT:
-                self.LR.increase()
-        elif event.type == pygame.KEYUP:
-            if event.key == K_RIGHT:
-                self.LR.stop_increase()
+
 
     def update(self, seconds, colliders):
-        resultUD = self.UD.update(seconds, colliders[3])
-        resultLR = self.LR.update(seconds, [colliders[0], colliders[1], colliders[2]])
+        if len(colliders) == 2 or len(colliders) == 3:
+            resultUD = self.UD.update(seconds, colliders[1])
+            if len(colliders) == 2:
+                resultLR = self.LR.update(seconds, [colliders[0]])
+            else:
+                resultLR = self.LR.update(seconds, [colliders[0], colliders[2]])
+        #elif len(colliders) == 3:
+            #resultUD = self.UD.update(seconds, colliders[2])
+            #resultLR = self.LR.update(seconds, [colliders[0], colliders[1]])
+        elif len(colliders) == 4:
+            resultUD = self.UD.update(seconds, colliders[3])
+            resultLR = self.LR.update(seconds, [colliders[0], colliders[1], colliders[2]])
 
         super().update(seconds, colliders)
 

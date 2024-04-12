@@ -50,3 +50,18 @@ class EventMenu(AbstractMenu):
             function = self.eventMap[key]
             if function(event):
                 return key
+            
+class DifficultyMenu(AbstractMenu):
+    def __init__(self, background, fontName="default", color=(255,255,255)):
+        super().__init__(background, fontName, color)
+        self.difficultyMap = {}
+
+    def addOption(self, key, text, position, difficultyLambda, center=None):
+        super().addOption(key, text, position, center)
+        self.difficultyMap[key] = difficultyLambda
+
+    def handleEvent(self, event):
+        for key in self.difficultyMap.keys():
+            difficulty = self.difficultyMap[key]
+            if difficulty(event):
+                return key

@@ -19,5 +19,9 @@ class TextEntry(Drawable):
     def __init__(self, position, text, font="default", color=(255,255,255)):
         super().__init__(position, "")
         self.color = color
+        self.font = font
 
-        self.image = TextEntry.FONTS[font].render(text, False, self.color)
+        self.image = TextEntry.FONTS[self.font].render(text, False, self.color)
+
+    def getFont(self):
+        return TextEntry.FONTS[self.font]
