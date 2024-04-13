@@ -3,6 +3,7 @@ from utils import SpriteManager
 
 
 class Animated(Drawable):
+    """This class sets up the framework for the behavior of the game's animations."""
     def __init__(self, position=(0,0), fileName=""):
         super().__init__(position, fileName, (0,0))
         self.fileName = fileName

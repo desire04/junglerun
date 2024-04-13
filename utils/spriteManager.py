@@ -38,7 +38,8 @@ class SpriteManager(object):
          "mountain_wide.png" : (60, 35),
          "bubbleshield.png" : (50,50),
          "newtiger.png" : (108,76),
-         "sonicrings.png" : (30,30)
+         "sonicrings.png" : (30,30),
+         "shields.png" : (25,25)
       }
       
       # A default sprite size
@@ -49,7 +50,7 @@ class SpriteManager(object):
       
       # A list of images that require to be loaded with a color key
       _COLOR_KEY = ["sonicmodified1.png", "mountain_wide.png", "mountain_small.png", "trees.png",
-                    "sonicrings.png", "tiger.png", "newtiger.png", "bubbleshield.png"]
+                    "sonicrings.png", "newtiger.png", "bubbleshield.png", "shields.png"]
       
       def __init__(self):
          # Stores the surfaces indexed based on file name

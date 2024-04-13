@@ -1,21 +1,17 @@
 from FSMs import RunningFSM, AccelerationFSM
-from utils import vec, RESOLUTION, rectAdd
-from gameObjects import Drawable
 from . import MobileGravity
-
 from pygame.locals import *
 
-import pygame
-import numpy as np
-from os.path import join
 
 class Tiger(MobileGravity):
+    """Tiger's main class."""
     def __init__(self, position):
+        """Set tiger's animation frames and initialize the appropriate finite state machines."""
         super().__init__(position, "newtiger.png")
         
         self.framesPerSecond = 3
         self.nFrames = 1
-        self.collisions = 0
+        self.collisions = False
         self.hasCollided = False
 
         self.nFramesList = {
@@ -41,8 +37,8 @@ class Tiger(MobileGravity):
         super().handleEvent(event)
 
     def update(self, seconds, colliders=None):
+        "Send colliders to finite state machines to be updated"
         self.LR.update(seconds, colliders)
-
         super().update(seconds, colliders)
 
     def draw(self, drawSurface):

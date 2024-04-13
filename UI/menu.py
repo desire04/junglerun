@@ -1,8 +1,6 @@
 from gameObjects import Drawable
-from utils.vector import vec, magnitude 
+from utils.vector import vec
 from . import TextEntry 
-
-import pygame
 
 class AbstractMenu(Drawable):
     def __init__(self, background, fontName="default",
@@ -52,6 +50,8 @@ class EventMenu(AbstractMenu):
                 return key
             
 class DifficultyMenu(AbstractMenu):
+    """Difficulty menu that sends difficulty information to the screen manager
+    based on user input."""
     def __init__(self, background, fontName="default", color=(255,255,255)):
         super().__init__(background, fontName, color)
         self.difficultyMap = {}
@@ -64,4 +64,22 @@ class DifficultyMenu(AbstractMenu):
         for key in self.difficultyMap.keys():
             difficulty = self.difficultyMap[key]
             if difficulty(event):
+                return key
+            
+
+class HomeMenu(AbstractMenu):
+    """Homescreen menu that sends information to the screen manager
+    based on user input."""
+    def __init__(self, background, fontName="default8", color=(255,255,255)):
+        super().__init__(background, fontName, color)
+        self.homeMap = {}
+
+    def addOption(self, key, text, position, homeLambda, center=None):
+        super().addOption(key, text, position, center)
+        self.homeMap[key] = homeLambda
+
+    def handleEvent(self, event):
+        for key in self.homeMap.keys():
+            menu = self.homeMap[key]
+            if menu(event):
                 return key

@@ -1,22 +1,25 @@
+import pygame
 from FSMs import RunningFSM, GravityFSM, AccelerationFSM
-from utils import vec, RESOLUTION, rectAdd
-from gameObjects import Drawable
+from utils import rectAdd
 from . import MobileGravity
-
 from pygame.locals import *
 
-import pygame
-import numpy as np
-from os.path import join
+
+
 
 
 class Sonic(MobileGravity):
+    """Sonic's main class."""
     def __init__(self, position):
+        """Initialize sonic's animation frames and the appropriate 
+        finite state machines."""
         super().__init__(position, "sonicmodified1.png")
 
         self.framesPerSecond = 3
         self.nFrames = 4
         self.hasAShield = False
+        self.collisions = False
+        
 
         self.nFramesList = {
             "moving" : 3, 
@@ -45,21 +48,20 @@ class Sonic(MobileGravity):
         self.UD = GravityFSM(self)
 
     def handleEvent(self, event):
+        """Handle jumping based on user input"""
         if event.type == pygame.KEYDOWN:
             if event.key == K_UP:
                 self.UD.jump()
 
 
     def update(self, seconds, colliders):
-        if len(colliders) == 2 or len(colliders) == 3:
+        """Send colliders to the finite state machines."""
+        if len(colliders) == 2:
             resultUD = self.UD.update(seconds, colliders[1])
-            if len(colliders) == 2:
-                resultLR = self.LR.update(seconds, [colliders[0]])
-            else:
-                resultLR = self.LR.update(seconds, [colliders[0], colliders[2]])
-        #elif len(colliders) == 3:
-            #resultUD = self.UD.update(seconds, colliders[2])
-            #resultLR = self.LR.update(seconds, [colliders[0], colliders[1]])
+            resultLR = self.LR.update(seconds, [colliders[0]])
+        elif len(colliders) == 3:
+            resultUD = self.UD.update(seconds, colliders[2])
+            resultLR = self.LR.update(seconds, [colliders[0], colliders[1]])
         elif len(colliders) == 4:
             resultUD = self.UD.update(seconds, colliders[3])
             resultLR = self.LR.update(seconds, [colliders[0], colliders[1], colliders[2]])
@@ -74,7 +76,7 @@ class Sonic(MobileGravity):
     def draw(self, drawSurface):
         super().draw(drawSurface)
     
-    def colliderect(self, other):
+    def colliderect(self):
         sonicHitBox = rectAdd(self.position, self.image.get_rect())
         
         

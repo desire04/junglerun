@@ -4,6 +4,7 @@ from statemachine import State
 
 class AnimateFSM(AbstractGameFSM):
     def on_enter_state(self):
+        """set the suitable animation frame"""
         state = self.current_state.id
         if self.obj.row != self.obj.rowList[state]:
             self.obj.nFrames = self.obj.nFramesList[state]
@@ -28,6 +29,7 @@ class RunningFSM(AnimateFSM):
     stop = moving.to(standing)
 
     def updateState(self):
+        """update animation based on current state and intended next state"""
         if self.isJumping() and self != "jumping":
             self.jump()
         elif self.isFalling() and self != "falling":
@@ -40,18 +42,23 @@ class RunningFSM(AnimateFSM):
             self.stop()
 
     def hasVelocity(self):
+        """check if the object is moving"""
         return magnitude(self.obj.velocity) > EPSILON
 
 
     def isJumping(self):
+        """check if the object is jumping"""
         return self.obj.velocity[1] < -EPSILON
     
     def isFalling(self):
+        """check if the object is falling"""
         return self.obj.velocity[1] > EPSILON
     
     def isGrounded(self):
+        """check if the object is on the ground"""
         return not self.isFalling() and not self.isJumping()
     
     def noVelocity(self):
+        """check if the object is not moving"""
         return not self.hasVelocity()
     

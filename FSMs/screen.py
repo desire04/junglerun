@@ -3,12 +3,16 @@ from statemachine import State
 
 
 class ScreenManagerFSM(AbstractGameFSM):
-    difficultyMenu = State(initial=True)
+    """Screen manager finite state machine that handles the different
+    screen modes of the game."""
+    homeMenu = State(initial=True)
+    difficultyMenu = State()
     mainMenu = State()
     game     = State()
     paused   = State()
     gameOver = State()
     
+    selectDifficulty = homeMenu.to(difficultyMenu)
     loadGame = difficultyMenu.to(mainMenu)
     pause = game.to(paused) | paused.to(game) | \
             mainMenu.to.itself(internal=True)
@@ -25,6 +29,7 @@ class ScreenManagerFSM(AbstractGameFSM):
         return self == "game" or self == "paused" or self == "gameOver"
     
     def on_enter_game(self):
+        """load the game after the difficulty has been selected"""
         self.obj.game.load()
         self.obj.game.sonic.updateMovement()
     

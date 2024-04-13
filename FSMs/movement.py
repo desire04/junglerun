@@ -1,21 +1,21 @@
 from . import AbstractGameFSM
-from utils import vec, magnitude, EPSILON, scale, RESOLUTION, rectAdd
+from utils import vec, magnitude, rectAdd
 from statemachine import State
-from gameObjects import Drawable
+
 
 
 class MovementFSM(AbstractGameFSM):
-    
+    """The movement finite state machine that handles the movements of sonic
+    and the tiger"""
     def __init__(self, obj):
         super().__init__(obj)
 
     def update(self, seconds):
         super().update(seconds)
-        #handle collisions here
 
 
 class AccelerationFSM(MovementFSM):
-
+    """The acceleration finite state machine that handles rightward movement"""
     not_moving = State(initial=True)
     uniform_motion = State()
     positive = State()
@@ -32,6 +32,7 @@ class AccelerationFSM(MovementFSM):
         super().__init__(obj)
 
     def updateState(self):
+        """This method is irrelevant in this context, since rightward movement is automatic."""
         if self == "positive" and self.obj.position[0] % 1000 != 0:
             self.stop_increase()
         elif self.isNotAccelerating() and self.obj.position[0] % 1000 == 0:
@@ -44,6 +45,8 @@ class AccelerationFSM(MovementFSM):
         return self.accel == 0
     
     def update(self, seconds=0, colliders=None):
+        """Updates the velocity and gravity of the object and sends information
+        for proper collision handling to the game engine"""
         if self == "uniform_motion":
             self.accel = 0
         elif self == "positive":
@@ -55,15 +58,11 @@ class AccelerationFSM(MovementFSM):
             for item in colliders:
                 if item.doesCollide(self.obj) and not self.obj.hasAShield:
                     return "sonic's speed reduced"
-                else:
-                    shield = colliders[len(colliders)-1]
-                    shield.isAttached = False
-                    self.obj.hasAShield = False
-                    colliders.pop(len(colliders)-1)
 
         super().update(seconds)
 
 class GravityFSM(MovementFSM):
+    """Gravity finite state machine that handles up and down movement"""
     def __init__(self, obj):
         super().__init__(obj)
         self.jumpTimer = 0
@@ -71,7 +70,6 @@ class GravityFSM(MovementFSM):
         self.jumpSpeed = 100
         self.jumpCounter = 0
         self.maxjumps = 3
-        #jump counter
         self.jumpTime = 0.1
 
     grounded = State(initial=True)
@@ -87,9 +85,6 @@ class GravityFSM(MovementFSM):
     def updateState(self):
         if self.canFall() and self == "jumping":
             self.fall()
-        #elif self.cannotFall() and self.canJumpAgain() and self == "moving":
-            #self.jump()
-    
 
     def canFall(self):
         return self.jumpTimer < 0
@@ -105,15 +100,16 @@ class GravityFSM(MovementFSM):
         self.jumpTimer = self.jumpTime
 
     def update(self, seconds=0, colliders=None):
+        """update the object's position and velocity on the y-axis
+        depending on its state"""
         if self == "falling":
             self.obj.velocity[1] += self.gravity * seconds
-            hitBox = rectAdd(self.obj.position, self.obj.image.get_rect())
-            if colliders.colliderect(hitBox):
-                    #get clip rect; subtract height of clip rect from y position of sonic
-                if self.obj.position[1] < 236:
-                    self.land()
-                    self.jumpCounter = 0
-            #check to see if i should transition to grounded
+            hitbox = rectAdd(self.obj.position, self.obj.image.get_rect())
+            if colliders.colliderect(hitbox):
+                self.land()
+                clip = colliders.clip(hitbox).height
+                self.obj.position[1] -= clip - 2
+                self.jumpCounter = 0
         elif self == "jumping":
             self.obj.velocity[1] = -self.jumpSpeed
             self.jumpTimer -= seconds

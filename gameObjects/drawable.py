@@ -1,6 +1,5 @@
-from utils import SpriteManager, SCALE, RESOLUTION, vec
-
 import pygame
+from utils import SpriteManager, SCALE, RESOLUTION, vec
 
 class Drawable(object):
     
